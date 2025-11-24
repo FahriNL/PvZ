@@ -1,0 +1,5 @@
+{
+  "name": "TerraPlane 3D",
+  "description": "An interactive 3D ground visualization tool using React Three Fiber. Customize the ground color, grid properties, and lighting in real-time.",
+  "requestFramePermissions": []
+}
