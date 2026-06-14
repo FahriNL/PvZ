@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { GameSettings } from '../../types';
-import { ArrowLeft, Volume2, Music, Monitor, Check, Gamepad2, Volume1 } from 'lucide-react';
+import { ArrowLeft, Volume2, Music, Monitor, Volume1 } from 'lucide-react';
 
 interface SettingsMenuProps {
   settings: GameSettings;
@@ -70,25 +70,6 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({ settings, onUpdate, 
                 value={settings.sfxVolume}
                 onChange={(e) => handleChange('sfxVolume', parseFloat(e.target.value))}
                 className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-yellow-500"
-              />
-            </div>
-          </div>
-
-          <div className="w-full h-px bg-slate-700" />
-
-          {/* Controls Section */}
-          <div className="space-y-4">
-             <h3 className="text-purple-400 text-xs font-bold uppercase tracking-widest">Mobile Controls</h3>
-             <div>
-              <div className="flex justify-between text-sm text-slate-300 mb-2">
-                <span className="flex items-center gap-2"><Gamepad2 size={16} /> Joystick Opacity</span>
-                <span>{Math.round(settings.joystickOpacity * 100)}%</span>
-              </div>
-              <input 
-                type="range" min="0.1" max="1" step="0.1"
-                value={settings.joystickOpacity}
-                onChange={(e) => handleChange('joystickOpacity', parseFloat(e.target.value))}
-                className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
           </div>

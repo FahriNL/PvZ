@@ -140,12 +140,10 @@ interface CharacterProps {
   obstacles: Obstacle[];
   onDeath: () => void;
   isGameOver: boolean;
-  mobileMove?: { x: number, y: number };
-  isMobileShooting?: boolean;
 }
 
 export const Character: React.FC<CharacterProps> = ({ 
-  plantType, stats, onShoot, powerUps, onCollect, obstacles, onDeath, isGameOver, mobileMove, isMobileShooting 
+  plantType, stats, onShoot, powerUps, onCollect, obstacles, onDeath, isGameOver
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const spriteRef = useRef<THREE.Mesh>(null);
@@ -159,7 +157,6 @@ export const Character: React.FC<CharacterProps> = ({
   const [currentHp, setCurrentHp] = useState(stats.maxHp);
   const lastHitTime = useRef(0);
   const regenTimer = useRef(0);
-  const lastShootTime = useRef(0);
 
   // Sync HP when MaxHP changes (Upgrades)
   useEffect(() => {
@@ -222,7 +219,7 @@ export const Character: React.FC<CharacterProps> = ({
     };
     
     const handleMouseDown = () => {
-      if (!isMobileShooting) shoot(); // Only mouse clicks trigger this logic
+      shoot(); 
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -234,7 +231,7 @@ export const Character: React.FC<CharacterProps> = ({
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('mousedown', handleMouseDown);
     };
-  }, [onShoot, plantType, stats.damageMultiplier, isGameOver, isMobileShooting]);
+  }, [onShoot, plantType, stats.damageMultiplier, isGameOver]);
 
   useFrame((state, delta) => {
     if (!groupRef.current || !spriteRef.current || isGameOver) return;
@@ -246,15 +243,6 @@ export const Character: React.FC<CharacterProps> = ({
             setCurrentHp(prev => Math.min(stats.maxHp, prev + stats.regenRate));
             regenTimer.current = 0;
         }
-    }
-
-    // --- AUTO FIRE (MOBILE) ---
-    if (isMobileShooting) {
-      const now = Date.now();
-      if (now - lastShootTime.current > (300 / stats.attackSpeedMultiplier)) {
-        shoot();
-        lastShootTime.current = now;
-      }
     }
 
     const speed = 6 * delta;
@@ -271,37 +259,22 @@ export const Character: React.FC<CharacterProps> = ({
     if (keys.has('ArrowLeft') || keys.has('KeyA')) moveDir.x -= 1;
     if (keys.has('ArrowRight') || keys.has('KeyD')) moveDir.x += 1;
 
-    // Mobile Joystick Input
-    if (mobileMove && (Math.abs(mobileMove.x) > 0.05 || Math.abs(mobileMove.y) > 0.05)) {
-      moveDir.x += mobileMove.x;
-      moveDir.z += mobileMove.y;
-    }
-
     // --- AIMING ---
-    // If using Mouse
+    // Aim using Mouse
     const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     raycaster.setFromCamera(pointer, camera);
     const targetPoint = new THREE.Vector3();
     raycaster.ray.intersectPlane(groundPlane, targetPoint);
 
-    // Default aim using mouse
-    if (targetPoint && (!mobileMove || (Math.abs(mobileMove.x) < 0.1 && Math.abs(mobileMove.y) < 0.1))) {
+    if (targetPoint) {
       const dx = targetPoint.x - position.x;
       const dz = targetPoint.z - position.z;
       const angle = -Math.atan2(dz, dx); 
       sprite.rotation.y = angle;
     }
-    // Mobile Aiming (Face movement direction)
-    else if (moveDir.lengthSq() > 0.01) {
-      const angle = -Math.atan2(moveDir.z, moveDir.x);
-      sprite.rotation.y = angle;
-    }
-
 
     if (moveDir.length() > 0) {
-      // Normalize but keep joystick magnitude if it's less than 1 (for slow walking)
-      const inputMag = Math.min(1, moveDir.length());
-      moveDir.normalize().multiplyScalar(speed * inputMag);
+      moveDir.normalize().multiplyScalar(speed);
       
       const nextPos = position.clone().add(moveDir);
       

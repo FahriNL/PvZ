@@ -15,7 +15,6 @@ import { UpgradeMenu } from './UI/UpgradeMenu';
 import { GameOverScreen } from './UI/GameOverScreen';
 import { MainMenu } from './UI/MainMenu';
 import { SettingsMenu } from './UI/SettingsMenu';
-import { MobileControls } from './UI/MobileControls';
 import { 
   Bullet, EnemyData, ZombieType, PlantType, PowerUp, 
   Obstacle, ZombieBiome, PlayerStats, UpgradeOption, GameSettings
@@ -45,8 +44,7 @@ export const Scene: React.FC = () => {
     masterVolume: 0.3,
     musicVolume: 0.6,
     sfxVolume: 0.8,
-    highQuality: true,
-    joystickOpacity: 0.6
+    highQuality: true
   });
 
   // --- GAMEPLAY STATE ---
@@ -70,10 +68,6 @@ export const Scene: React.FC = () => {
     damageMultiplier: 1.0,
     attackSpeedMultiplier: 1.0
   });
-
-  // Mobile Input State
-  const [mobileMove, setMobileMove] = useState({ x: 0, y: 0 });
-  const [isMobileShooting, setIsMobileShooting] = useState(false);
 
   const requiredXp = level * 100;
 
@@ -291,16 +285,7 @@ export const Scene: React.FC = () => {
       )}
       
       {gameState === 'playing' && !isUpgradeOpen && (
-        <>
-          <HUD level={level} xp={xp} nextLevelXp={requiredXp} />
-          {/* Mobile Controls */}
-          <MobileControls 
-            onMove={(x, y) => setMobileMove({ x, y })}
-            onShootStart={() => setIsMobileShooting(true)}
-            onShootEnd={() => setIsMobileShooting(false)}
-            opacity={settings.joystickOpacity}
-          />
-        </>
+        <HUD level={level} xp={xp} nextLevelXp={requiredXp} />
       )}
       
       {gameState === 'gameover' && (
@@ -356,8 +341,6 @@ export const Scene: React.FC = () => {
             obstacles={obstacles}
             onDeath={handlePlayerDeath}
             isGameOver={gameState === 'gameover'}
-            mobileMove={mobileMove}
-            isMobileShooting={isMobileShooting}
           />
         )}
 

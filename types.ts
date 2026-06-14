@@ -1,5 +1,43 @@
 
 import * as THREE from 'three';
+import React from 'react';
+
+// Augment JSX namespace to recognize React Three Fiber intrinsic elements
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      ambientLight: any;
+      pointLight: any;
+      directionalLight: any;
+      spotLight: any;
+      fog: any;
+      color: any;
+      mesh: any;
+      group: any;
+      instancedMesh: any;
+      primitive: any;
+      boxGeometry: any;
+      planeGeometry: any;
+      sphereGeometry: any;
+      cylinderGeometry: any;
+      coneGeometry: any;
+      dodecahedronGeometry: any;
+      meshStandardMaterial: any;
+      meshBasicMaterial: any;
+      gridHelper: any;
+
+      // HTML Elements
+      div: any;
+      span: any;
+      h1: any;
+      h2: any;
+      h3: any;
+      p: any;
+      button: any;
+      input: any;
+    }
+  }
+}
 
 export type PlantType = 'normal' | 'repeater' | 'ice' | 'fire';
 
@@ -70,5 +108,4 @@ export interface GameSettings {
   musicVolume: number;  // 0 to 1
   sfxVolume: number;    // 0 to 1
   highQuality: boolean; // toggles shadows/antialias
-  joystickOpacity: number; // 0 to 1
 }
